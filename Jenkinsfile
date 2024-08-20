@@ -34,13 +34,14 @@ pipeline{
                 sh 'echo ###########################'
                 sh 'ls'
             }
-            post {
-                success {
-                    echo "Now Archiving."
-                    archiveArtifacts artifacts: '**/*.war'
-                }
+                    
+        }
+
+        stage('BUILD DOCKER IMAGE'){            
+            steps {
+                sh 'docker buildx build --tag ndzenyuy/ecommerce_app:latest --file Docker-files/app/Dockerfile .'
             }
-        
+            
         }
 
         stage ("Deploy to stage"){
