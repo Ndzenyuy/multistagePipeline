@@ -46,8 +46,8 @@ pipeline{
             steps {
                 script {
                     withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
-                        sh 'docker push ndzenyuy/ecommerce:latest'
-                        sh 'docker rmi ndzenyuy/ecommerce:latest'
+                        sh 'docker push ndzenyuy/ecommerce_app:latest'
+                        sh 'docker rmi ndzenyuy/ecommerce_app:latest'
                     }
                 }
             }                       
