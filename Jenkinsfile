@@ -31,6 +31,8 @@ pipeline{
             
             steps {
                 sh 'mvn -DskipTests install'
+                sh 'echo ###########################'
+                sh 'ls'
             }
             post {
                 success {
