@@ -1,9 +1,13 @@
 pipeline{
     agent any
+    tools {
+        maven "maven3"
+        jdk "OpenJDK-11"
+    }
     stages{
-        stage ("Test") {
-            steps{
-                sh 'echo test stage'
+        stage('UNIT TEST'){
+            steps {
+                sh 'mvn test'
             }
         }
 
