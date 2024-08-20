@@ -42,6 +42,17 @@ pipeline{
             
         }
 
+        stage('PUBLISH DOCKER IMAGE'){            
+            steps {
+                script {
+                    withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
+                        sh 'docker push ndzenyuy/ecommerce:latest'
+                        sh 'docker rmi ndzenyuy/ecommerce:latest'
+                    }
+                }
+            }                       
+        }
+
         stage ("Deploy to stage"){
             steps{
                 sh 'echo deploy to stage'
