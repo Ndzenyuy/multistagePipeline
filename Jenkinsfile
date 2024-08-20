@@ -27,10 +27,18 @@ pipeline{
             }
         }
 
-        stage ("Build"){
-            steps{
-                sh 'echo Build stage'
+        stage ('BUILD ARTIFACT'){
+            
+            steps {
+                sh 'mvn -DskipTests install'
             }
+            post {
+                success {
+                    echo "Now Archiving."
+                    archiveArtifacts artifacts: '**/*.war'
+                }
+            }
+        
         }
 
         stage ("Deploy to stage"){
