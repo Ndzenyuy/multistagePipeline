@@ -30,9 +30,7 @@ pipeline{
         stage ('BUILD ARTIFACT'){
             
             steps {
-                sh 'mvn -DskipTests install'
-                sh 'echo ###########################'
-                sh 'ls'
+                sh 'mvn -DskipTests install'                
             }
                     
         }
