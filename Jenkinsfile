@@ -37,10 +37,10 @@ pipeline{
 
         stage ('Sonar Cloud') {
         environment {
-            scannerHome = tool "${sonarserver}"
+            scannerHome = tool 'sonarserver'
         }
             steps{
-                withSonarQubeEnv("${sonarscanner}") {
+                withSonarQubeEnv('sonarscanner') {
                     sh "${scannerHome}/bin/sonar-scanner \
                     -Dsonar.organization=emart-webapp \
                     -Dsonar.projectKey=Ndzenyuy_multistagePipeline \
