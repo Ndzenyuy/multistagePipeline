@@ -24,6 +24,7 @@ pipeline{
                 success {
                     echo 'Generated Analysis Result'
                 }
+
             }
         }
 
@@ -31,9 +32,11 @@ pipeline{
             
             steps {
                 sh 'mvn -DskipTests install'                
+
             }
                     
         }
+
 
         stage ('CODE ANALYSIS WITH SONARQUBE') {
         environment {
@@ -51,10 +54,12 @@ pipeline{
                     -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/"
                 }                
             }
+
         }
 
         stage('BUILD DOCKER IMAGE'){            
             steps {
+
                 sh 'docker buildx build --tag ndzenyuy/ecommerce_app-${BUILD_ID}:latest --file Docker-files/app/Dockerfile .'
             }
             
@@ -69,6 +74,7 @@ pipeline{
                     }
                 }
             }                       
+
         }
 
         stage ("Deploy to stage"){
