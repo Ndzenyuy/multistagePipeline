@@ -79,8 +79,7 @@ pipeline{
 
         stage ("Deploy to stage"){
             steps{
-                sh 'echo deploy to stage'  
-                sh '....deployed to stage'              
+                sh 'echo deploy to stage'                              
             }
         }
 
