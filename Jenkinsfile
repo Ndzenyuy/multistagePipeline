@@ -37,7 +37,7 @@ pipeline{
 
         stage ('Sonar Cloud') {
         environment {
-            scannerHome = tool 'sonarscanner'
+            scannerHome = tool 'sonarserver'
         }
             steps{
                 withSonarQubeEnv('sonarserver') {
