@@ -6,10 +6,10 @@ pipeline{
     }
 
     // to configure build trigger for multibranch pipeline, install "Multibranch Scan Webhook Trigger" plugin
-    // add the token, then copy the url to github webhooks and store it there
+    // add the token, then copy the url to github webhooks and use it as the webhook link to trigger pipeline
 
     stages{
-        stage('UNIT TEST'){
+        stage('UNIT TEST'){                         // make sure maven3 is configured in tools
             steps {
                 sh 'mvn test'
             }
@@ -42,7 +42,7 @@ pipeline{
         }
 
 
-        stage ('CODE ANALYSIS WITH SONARQUBE') {
+        stage ('CODE ANALYSIS WITH SONARQUBE') {                    // create a project on sonarcloud.io and link it
         environment {
             scannerHome = tool 'sonarserver'
         }
@@ -61,16 +61,16 @@ pipeline{
 
         }
 
-        stage('BUILD DOCKER IMAGE'){            
-            steps {
-
+        stage('BUILD DOCKER IMAGE'){                        // install docker on the server and add jenkins to docker group
+            steps {                                         // sudo usermod -aG docker jenkins
+                                                            // systemctl restart jenkins
                 sh 'docker buildx build --tag ndzenyuy/ecommerce_app:${BUILD_ID} --file Docker-files/app/Dockerfile .'
             }
             
         } 
 
 
-        stage('PUBLISH DOCKER IMAGE'){            
+        stage('PUBLISH DOCKER IMAGE'){                      // store registery creds in dockerlogin  (jenkins)   
             steps {
                 script {
                     withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
