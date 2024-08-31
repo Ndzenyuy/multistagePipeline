@@ -2,7 +2,7 @@ pipeline{
     agent any
     tools {
         maven "maven3"
-        jdk "OpenJDK-11"
+        jdk "OpenJDK-17"
     }
     stages{
         stage('UNIT TEST'){
