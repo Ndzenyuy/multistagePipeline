@@ -84,7 +84,9 @@ pipeline{
         stage ("CLEAN WORKSPACE"){
             steps{
                 sh 'docker rmi ndzenyuy/ecommerce_app:${BUILD_ID}'
+                sh 'ls'
                 sh 'rm -rf target/'
+                sh 'ls'
             }
         }
 
