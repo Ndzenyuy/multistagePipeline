@@ -64,7 +64,7 @@ pipeline{
         stage('BUILD DOCKER IMAGE'){            
             steps {
 
-                sh 'docker buildx build --tag ndzenyuy/ecommerce_app-${BUILD_ID}:latest --file Docker-files/app/Dockerfile .'
+                sh 'docker buildx build --tag ndzenyuy/ecommerce_app:${BUILD_ID},latest --file Docker-files/app/Dockerfile .'
             }
             
         } 
@@ -74,12 +74,19 @@ pipeline{
             steps {
                 script {
                     withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
-                        sh 'docker push ndzenyuy/ecommerce_app-${BUILD_ID}:latest'
-                        sh 'docker rmi ndzenyuy/ecommerce_app-${BUILD_ID}:latest'
+                        sh 'docker push ndzenyuy/ecommerce_app:${BUILD_ID},latest'
+                        
                     }
                 }
             }                       
 
+        }
+
+        stage ("CLEAN WORKSPACE"){
+            steps{
+                sh 'docker rmi ndzenyuy/ecommerce_app:${BUILD_ID},latest'
+                sh 'rm -rf target/'
+            }
         }
 
         stage ("Deploy to stage"){
