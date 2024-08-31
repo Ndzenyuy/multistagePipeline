@@ -50,6 +50,10 @@ pipeline{
                     -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml \
                     -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/"
                 }
+
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
 
