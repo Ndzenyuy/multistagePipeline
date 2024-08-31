@@ -35,7 +35,7 @@ pipeline{
                     
         }
 
-        stage ('Sonar Cloud') {
+        stage ('CODE ANALYSIS WITH SONARQUBE') {
         environment {
             scannerHome = tool 'sonarserver'
         }
@@ -55,7 +55,7 @@ pipeline{
 
         stage('BUILD DOCKER IMAGE'){            
             steps {
-                sh 'docker buildx build --tag ndzenyuy/ecommerce_app-:latest --file Docker-files/app/Dockerfile .'
+                sh 'docker buildx build --tag ndzenyuy/ecommerce_app-${BUILD_ID}:latest --file Docker-files/app/Dockerfile .'
             }
             
         }
