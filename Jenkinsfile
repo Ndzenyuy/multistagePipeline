@@ -3,6 +3,7 @@ pipeline{
     tools {
         maven "maven3"
         jdk "OpenJDK-11"
+        scannerHome "sonarserver"
     }
     stages{
         stage('UNIT TEST'){
@@ -35,10 +36,7 @@ pipeline{
                     
         }
 
-        stage ('Sonar Cloud') {
-          environment {
-             scannerHome = tool "${sonarserver}"
-          }
+        stage ('Sonar Cloud') {          
             steps{
                 withSonarQubeEnv("${sonarscanner}") {
                     sh "${scannerHome}/bin/sonar-scanner \
