@@ -60,23 +60,15 @@ pipeline{
             }
 
         }
-/*
+
         stage('BUILD DOCKER IMAGE'){            
             steps {
 
                 sh 'docker buildx build --tag ndzenyuy/ecommerce_app-${BUILD_ID}:latest --file Docker-files/app/Dockerfile .'
             }
             
-        } */
+        } 
 
-        stage('BUILD DOCKER IMAGE'){            
-            steps {
-                script{
-                   def dockerImage = docker.build( "ndzenyuy/ecommerce_app-${BUILD_ID}:latest ")
-                }
-            }
-            
-        }
 
         stage('PUBLISH DOCKER IMAGE'){            
             steps {
