@@ -35,9 +35,28 @@ pipeline{
                     
         }
 
+        stage ('Sonar Cloud') {
+          environment {
+             scannerHome = tool "${sonarserver}"
+          }
+            steps{
+                withSonarQubeEnv("${sonarscanner}") {
+                    sh "${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.organization=emart-webapp \
+                    -Dsonar.projectKey=Ndzenyuy_multistagePipeline \
+                    -Dsonar.sources=src/
+                    -Dsonar.junit.reportsPath=target/surefire-reports/ 
+                    -Dsonar.jacoco.reportsPath=target/jacoco.exec 
+                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
+                    -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/
+                    "
+                }
+            }
+        }
+
         stage('BUILD DOCKER IMAGE'){            
             steps {
-                sh 'docker buildx build --tag ndzenyuy/ecommerce_app:latest --file Docker-files/app/Dockerfile .'
+                sh 'docker buildx build --tag ndzenyuy/ecommerce_app-:latest --file Docker-files/app/Dockerfile .'
             }
             
         }
