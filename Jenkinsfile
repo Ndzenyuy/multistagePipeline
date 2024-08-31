@@ -1,9 +1,13 @@
 pipeline{
     agent any
     tools {
-        maven "maven3"
+        maven "maven3"              // configure both openjdk and maven in manage jenkins -> tools let both names match these
         jdk "OpenJDK-17"
     }
+
+    // to configure build trigger for multibranch pipeline, install "Multibranch Scan Webhook Trigger" plugin
+    // add the token, then copy the url to github webhooks and store it there
+
     stages{
         stage('UNIT TEST'){
             steps {
@@ -56,11 +60,20 @@ pipeline{
             }
 
         }
-
+/*
         stage('BUILD DOCKER IMAGE'){            
             steps {
 
                 sh 'docker buildx build --tag ndzenyuy/ecommerce_app-${BUILD_ID}:latest --file Docker-files/app/Dockerfile .'
+            }
+            
+        } */
+
+        stage('BUILD DOCKER IMAGE'){            
+            steps {
+                script{
+                   def dockerImage = docker.build( "ndzenyuy/ecommerce_app-${BUILD_ID}:latest ")
+                }
             }
             
         }
