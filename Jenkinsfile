@@ -44,10 +44,10 @@ pipeline{
                     sh "${scannerHome}/bin/sonar-scanner \
                     -Dsonar.organization=emart-webapp \
                     -Dsonar.projectKey=Ndzenyuy_multistagePipeline \
-                    -Dsonar.sources=src/
-                    -Dsonar.junit.reportsPath=target/surefire-reports/ 
-                    -Dsonar.jacoco.reportsPath=target/jacoco.exec 
-                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
+                    -Dsonar.sources=src/ \
+                    -Dsonar.junit.reportsPath=target/surefire-reports/ \
+                    -Dsonar.jacoco.reportsPath=target/jacoco.exec \
+                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml \
                     -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/
                     "
                 }
