@@ -41,7 +41,6 @@ pipeline{
                     
         }
 
-/*
         stage ('CODE ANALYSIS WITH SONARQUBE') {                    // create a project on sonarcloud.io and link it
         environment {
             scannerHome = tool 'sonarserver'
@@ -60,16 +59,11 @@ pipeline{
             }
 
         }
-
-        stage('BUILD DOCKER IMAGE'){                        // install docker on the server and add jenkins to docker group
-            steps {                                         // sudo usermod -aG docker jenkins
-                                                            // systemctl restart jenkins
-                sh 'docker buildx build --tag ndzenyuy/ecommerce_app:${BUILD_ID} --file Docker-files/app/Dockerfile .'
-            }
-            
-        } */
+        
 
         stage('BUILD DOCKER IMAGE'){
+            // requires the following plugins: ## docker pipeline, ## cloudbees docker build and publish 
+            // no configuration required after plugins installation
             steps{
                 script{
                     dockerImage = docker.build("ndzenyuy/ecommerce:${BUILD_ID}",  ".")               
