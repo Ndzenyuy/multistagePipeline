@@ -78,7 +78,7 @@ pipeline{
         }
 
 
-        stage('PUBLISH DOCKER IMAGE'){                      // store registery creds in dockerlogin  (jenkins)   
+        /*stage('PUBLISH DOCKER IMAGE'){                      // store registery creds in dockerlogin  (jenkins)   
             steps {
                 script {
                     withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
@@ -96,7 +96,7 @@ pipeline{
                 sh 'rm -rf target/'
                 sh 'ls'
             }
-        }
+        } */
 
         stage ("Deploy to stage"){
             steps{
