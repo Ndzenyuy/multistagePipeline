@@ -72,18 +72,18 @@ pipeline{
         }
 
 
-        /*stage('PUBLISH DOCKER IMAGE'){                      // store registery creds in dockerlogin  (jenkins)   
+        stage('PUBLISH DOCKER IMAGE'){                      // store registery creds in dockerlogin  (jenkins)   
             steps {
                 script {
                     withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
-                        sh 'docker push ndzenyuy/ecommerce_app:${BUILD_ID}'                        
+                        dockerImage.push(${BUILD_ID})                        
                     }
                 }
             }                       
 
         }
 
-        stage ("CLEAN WORKSPACE"){
+        /*stage ("CLEAN WORKSPACE"){
             steps{
                 sh 'docker rmi ndzenyuy/ecommerce_app:${BUILD_ID}'
                 sh 'ls'
