@@ -61,13 +61,21 @@ pipeline{
 
         }
 
-        stage('BUILD DOCKER IMAGE'){                        // install docker on the server and add jenkins to docker group
+        /*stage('BUILD DOCKER IMAGE'){                        // install docker on the server and add jenkins to docker group
             steps {                                         // sudo usermod -aG docker jenkins
                                                             // systemctl restart jenkins
                 sh 'docker buildx build --tag ndzenyuy/ecommerce_app:${BUILD_ID} --file Docker-files/app/Dockerfile .'
             }
             
-        } 
+        } */
+
+        stage('BUILD DOCKER IMAGE'){
+            steps{
+                script{
+                    dockerImage = docker.build("ndzenyuy/ecommerce:${BUILD_ID}",  ".")               
+                    }
+            }
+        }
 
 
         stage('PUBLISH DOCKER IMAGE'){                      // store registery creds in dockerlogin  (jenkins)   
