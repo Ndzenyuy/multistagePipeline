@@ -80,10 +80,11 @@ pipeline{
         stage('Upload App Image') {
           steps{
             script {
-              docker.withRegistry( registryCreds ) {
+               withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
                 dockerImage.push("$BUILD_NUMBER")
                 dockerImage.push('latest')
-              }
+               }              
+              
             }
           }
         } 
