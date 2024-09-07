@@ -75,9 +75,7 @@ pipeline{
         stage('PUBLISH DOCKER IMAGE'){                      // store registery creds in dockerlogin  (jenkins)   
             steps {
                 script {
-                    withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
-                        dockerImage.push(${BUILD_ID})                        
-                    }
+                        dockerImage.push(${BUILD_ID})                                         
                 }
             }                       
 
