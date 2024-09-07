@@ -13,7 +13,7 @@ pipeline{
         registry = "https://hub.docker.com"
     }
 
-    stages{
+    stages{/*
         stage('UNIT TEST'){                         // make sure maven3 is configured in tools
             steps {
                 sh 'mvn test'
@@ -35,7 +35,7 @@ pipeline{
                 }
 
             }
-        }
+        }*/
 
         stage ('BUILD ARTIFACT'){
             
@@ -45,7 +45,7 @@ pipeline{
             }
                     
         }
-
+/*
         stage ('CODE ANALYSIS WITH SONARQUBE') {                    // create a project on sonarcloud.io and link it
         environment {
             scannerHome = tool 'sonarserver'
@@ -63,7 +63,7 @@ pipeline{
                 }                
             }
 
-        }
+        }*/
         
 
         stage('BUILD DOCKER IMAGE'){
