@@ -1,8 +1,10 @@
 pipeline{
     agent any
     tools {
+
         maven "maven3"              // configure both openjdk and maven in manage jenkins -> tools let both names match these
         jdk "openjdk-17"
+
     }
 
     // to configure build trigger for multibranch pipeline, install "Multibranch Scan Webhook Trigger" plugin
@@ -13,7 +15,7 @@ pipeline{
         registry = "https://hub.docker.com"
     }
 
-    stages{/*
+    stages{
         stage('UNIT TEST'){                         // make sure maven3 is configured in tools
             steps {
                 sh 'mvn test'
@@ -35,7 +37,7 @@ pipeline{
                 }
 
             }
-        }*/
+        }
 
         stage ('BUILD ARTIFACT'){
             
@@ -45,7 +47,7 @@ pipeline{
             }
                     
         }
-/*
+
         stage ('CODE ANALYSIS WITH SONARQUBE') {                    // create a project on sonarcloud.io and link it
         environment {
             scannerHome = tool 'sonarserver'
@@ -63,7 +65,8 @@ pipeline{
                 }                
             }
 
-        }*/
+
+        }
         
 
         stage('BUILD DOCKER IMAGE'){
@@ -75,7 +78,6 @@ pipeline{
                     }
             }
         }
-
 
         stage('Upload App Image') {
           steps{
@@ -96,6 +98,7 @@ pipeline{
                 sh 'rm -rf target/'                
             }
         } 
+
 
         stage ("Deploy to stage"){
             steps{
