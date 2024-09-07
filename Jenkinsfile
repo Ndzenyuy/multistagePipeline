@@ -2,7 +2,7 @@ pipeline{
     agent any
     tools {
         maven "maven3"              // configure both openjdk and maven in manage jenkins -> tools let both names match these
-        jdk "OpenJDK-17"
+        jdk "openJDK-17"
     }
 
     // to configure build trigger for multibranch pipeline, install "Multibranch Scan Webhook Trigger" plugin
