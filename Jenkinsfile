@@ -8,6 +8,11 @@ pipeline{
     // to configure build trigger for multibranch pipeline, install "Multibranch Scan Webhook Trigger" plugin
     // add the token, then copy the url to github webhooks and use it as the webhook link to trigger pipeline
 
+    environment{
+        registryCreds = 'dockerlogin'
+        registry = "https://hub.docker.com"
+    }
+
     stages{
         stage('UNIT TEST'){                         // make sure maven3 is configured in tools
             steps {
@@ -72,23 +77,24 @@ pipeline{
         }
 
 
-        stage('PUBLISH DOCKER IMAGE'){                      // store registery creds in dockerlogin  (jenkins)   
-            steps {
-                script {
-                        dockerImage.push(${BUILD_ID})                                         
-                }
-            }                       
-
-        }
-
-        /*stage ("CLEAN WORKSPACE"){
-            steps{
-                sh 'docker rmi ndzenyuy/ecommerce_app:${BUILD_ID}'
-                sh 'ls'
-                sh 'rm -rf target/'
-                sh 'ls'
+        stage('Upload App Image') {
+          steps{
+            script {
+              docker.withRegistry( registry, registryCreds ) {
+                dockerImage.push("$BUILD_NUMBER")
+                dockerImage.push('latest')
+              }
             }
-        } */
+          }
+        } 
+
+
+        stage ("CLEAN WORKSPACE"){
+            steps{
+                sh 'docker rmi -f $(docker images -aq)'                
+                sh 'rm -rf target/'                
+            }
+        } 
 
         stage ("Deploy to stage"){
             steps{
