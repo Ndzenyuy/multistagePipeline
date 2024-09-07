@@ -1,11 +1,22 @@
 pipeline{
     agent any
     tools {
-        maven "maven3"
-        jdk "OpenJDK-17"
+
+        maven "maven3"              // configure both openjdk and maven in manage jenkins -> tools let both names match these
+        jdk "openjdk-17"
+
     }
+
+    // to configure build trigger for multibranch pipeline, install "Multibranch Scan Webhook Trigger" plugin
+    // add the token, then copy the url to github webhooks and use it as the webhook link to trigger pipeline
+
+    environment{
+        registryCreds = 'dockerlogin'
+        registry = "https://hub.docker.com"
+    }
+
     stages{
-        stage('UNIT TEST'){
+        stage('UNIT TEST'){                         // make sure maven3 is configured in tools
             steps {
                 sh 'mvn test'
             }
@@ -37,8 +48,7 @@ pipeline{
                     
         }
 
-
-        stage ('CODE ANALYSIS WITH SONARQUBE') {
+        stage ('CODE ANALYSIS WITH SONARQUBE') {                    // create a project on sonarcloud.io and link it
         environment {
             scannerHome = tool 'sonarserver'
         }
@@ -55,31 +65,44 @@ pipeline{
                 }                
             }
 
+
         }
+        
 
-        stage('BUILD DOCKER IMAGE'){            
-            steps {
-
-                sh 'docker buildx build --tag ndzenyuy/ecommerce_app-${BUILD_ID}:latest --file Docker-files/app/Dockerfile .'
-            }
-            
-        }
-
-        stage('PUBLISH DOCKER IMAGE'){            
-            steps {
-                script {
-                    withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
-                        sh 'docker push ndzenyuy/ecommerce_app-${BUILD_ID}:latest'
-                        sh 'docker rmi ndzenyuy/ecommerce_app-${BUILD_ID}:latest'
+        stage('BUILD DOCKER IMAGE'){
+            // requires the following plugins: ## docker pipeline, ## cloudbees docker build and publish 
+            // no configuration required after plugins installation
+            steps{
+                script{
+                    dockerImage = docker.build("ndzenyuy/ecommerce:${BUILD_ID}",  ".")               
                     }
-                }
-            }                       
-
+            }
         }
+
+        stage('Upload App Image') {
+          steps{
+            script {
+               withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
+                dockerImage.push("$BUILD_NUMBER")
+                dockerImage.push('latest')
+               }              
+              
+            }
+          }
+        } 
+
+
+        stage ("CLEAN WORKSPACE"){
+            steps{
+                sh 'docker rmi -f $(docker images -aq)'                
+                sh 'rm -rf target/'                
+            }
+        } 
+
 
         stage ("Deploy to stage"){
             steps{
-                sh 'echo deploy to stage'
+                sh 'echo deploy to stage'                              
             }
         }
 
