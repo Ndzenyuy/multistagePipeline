@@ -100,12 +100,8 @@ pipeline{
 
         stage('Upload app Image'){  //upload to ecr, Install the plugin "AWS steps", and store aws credentials
             steps{
-                script {
-                   docker.withRegistry( ecrRegistry, registryCredential ) {
-                    dockerImage.push("$BUILD_NUMBER")
-                    dockerImage.push('latest')
-                    } 
-                }
+                sh 'aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin 781655249241.dkr.ecr.eu-west-3.amazonaws.com'
+                sh 'docker push 781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp:latest'
             }
         }
 
