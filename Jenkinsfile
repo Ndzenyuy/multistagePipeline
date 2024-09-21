@@ -85,12 +85,7 @@ pipeline{
             }
         }
 
-        stage('Scan Image for Vulnerabilities'){
-            steps{
-                
-            }
-        }
-
+        
         /*stage('Upload App Image') {  //upload to dockerhub
           steps{
             script {
