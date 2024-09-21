@@ -11,8 +11,14 @@ pipeline{
     // add the token, then copy the url to github webhooks and use it as the webhook link to trigger pipeline
 
     environment{
-        registryCreds = 'dockerlogin'
-        registry = "https://hub.docker.com"
+        /*registryCreds = 'dockerlogin'
+        registry = "https://hub.docker.com" */
+
+        registryCredential = 'ecr:eu-west-3:awscreds'
+        appRegistry = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'    
+        ecrRegistry = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
+        service = "vproappstagesvc"
+        cluster = "vproappcluster"
     }
 
     stages{
@@ -79,7 +85,13 @@ pipeline{
             }
         }
 
-        stage('Upload App Image') {
+        stage('Scan Image for Vulnerabilities'){
+            steps{
+                
+            }
+        }
+
+        /*stage('Upload App Image') {  //upload to dockerhub
           steps{
             script {
                withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
@@ -89,7 +101,18 @@ pipeline{
               
             }
           }
-        } 
+        } */
+
+        stage('Upload app Image'){  //upload to ecr, Install the plugin "AWS steps", and store aws credentials
+            steps{
+                script {
+                   docker.withRegistry( ecrRegistry, registryCredential ) {
+                    dockerImage.push("$BUILD_NUMBER")
+                    dockerImage.push('latest')
+                    } 
+                }
+            }
+        }
 
 
         stage ("CLEAN WORKSPACE"){
