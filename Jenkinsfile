@@ -80,7 +80,7 @@ pipeline{
             // no configuration required after plugins installation
             steps{
                 script{
-                    dockerImage = docker.build("ndzenyuy/ecommerce:${BUILD_ID}",  ".")               
+                    dockerImage = docker.build($appRegistry + "/ecommerce:${BUILD_ID}",  ".")               
                     }
             }
         }
