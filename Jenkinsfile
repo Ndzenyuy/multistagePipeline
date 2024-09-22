@@ -76,7 +76,7 @@ pipeline{
 
         }
         
-
+/*
         stage('BUILD DOCKER IMAGE'){
             // requires the following plugins: ## docker pipeline, ## cloudbees docker build and publish 
             // no configuration required after plugins installation
@@ -87,7 +87,7 @@ pipeline{
             }
         }
 
-        /*
+        
         stage('Upload App Image') {  //upload to dockerhub
           steps{
             script {
@@ -111,7 +111,7 @@ pipeline{
                         sh "echo ${ecrLogin} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}"
 
                         // Build the Docker image
-                        // def dockerImage = docker.build("${ECR_REPOSITORY}:${BUILD_ID}")
+                        def dockerImage = docker.build("${ECR_REPOSITORY}:${BUILD_ID}")
 
                         // Push the Docker image to ECR
                         dockerImage.push("${BUILD_NUMBER}")
