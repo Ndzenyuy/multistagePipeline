@@ -125,9 +125,7 @@ pipeline{
         stage ("CLEAN WORKSPACE"){
             steps{
 
-                sh 'docker rmi ${ECR_REPOSITORY}:${BUILD_ID}'                
-
-
+                sh 'docker rmi ${ECR_REPOSITORY}:${BUILD_ID}'  
                 sh 'rm -rf target/'                
             }
         } 
