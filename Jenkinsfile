@@ -80,7 +80,7 @@ pipeline{
             // no configuration required after plugins installation
             steps{
                 script{
-                    dockerImage = docker.build($appRegistry + "/ecommerce:${BUILD_ID}",  ".")               
+                    dockerImage = docker.build(appRegistry + "/ecommerce:${BUILD_ID}",  ".")               
                     }
             }
         }
@@ -89,7 +89,7 @@ pipeline{
         stage('Upload App Image') {  //upload to dockerhub
           steps{
             script {
-               withDockerRegistry([ credentialsId: "$registryCredential", url: "$ecrRegistry"]){
+               withDockerRegistry([ credentialsId: "registryCredential", url: "ecrRegistry"]){
                 dockerImage.push("$BUILD_NUMBER")
                 dockerImage.push('latest')
                }              
