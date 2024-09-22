@@ -11,9 +11,17 @@ pipeline{
     // add the token, then copy the url to github webhooks and use it as the webhook link to trigger pipeline
 
     environment{
-        registryCreds = 'dockerlogin'
-        registry = "https://hub.docker.com"
+        /*registryCreds = 'dockerlogin'
+        registry = "https://hub.docker.com" */
+
+        AWS_REGION = 'eu-west-3' // Specify your AWS region
+        ECR_REPOSITORY = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'       
+        ECR_REGISTRY = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
+        service = "ecommercesvc1"
+        cluster = "ecommerce"
     }
+
+   
 
     stages{
         stage('UNIT TEST'){                         // make sure maven3 is configured in tools
@@ -68,7 +76,7 @@ pipeline{
 
         }
         
-
+/*
         stage('BUILD DOCKER IMAGE'){
             // requires the following plugins: ## docker pipeline, ## cloudbees docker build and publish 
             // no configuration required after plugins installation
@@ -89,21 +97,47 @@ pipeline{
               
             }
           }
-        } 
+        }  */
+
+        stage('Build and Upload app Image'){  //Build and upload to ecr, Install the plugin "AWS steps", and store aws credentials
+            steps{
+                script {
+                   script {
+                    // Use the AWS Credentials
+                    withAWS(credentials: 'aws-ecr-creds', region: "${AWS_REGION}") {
+                        // Authenticate to ECR
+                        def ecrLogin = sh(script: "aws ecr get-login-password --region ${AWS_REGION}", returnStdout: true).trim()
+                        sh "echo ${ecrLogin} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}"
+
+                        // Build the Docker image
+                        def dockerImage = docker.build("${ECR_REPOSITORY}:${BUILD_ID}")
+
+                        // Push the Docker image to ECR
+                        dockerImage.push("${BUILD_NUMBER}")
+                        dockerImage.push('latest')
+                    }
+                }
+                }
+            }
+        }
 
 
         stage ("CLEAN WORKSPACE"){
             steps{
-                sh 'docker rmi ndzenyuy/ecommerce:${BUILD_ID}'                
+
+                sh 'docker rmi ${ECR_REPOSITORY}:${BUILD_ID}'                
+
 
                 sh 'rm -rf target/'                
             }
         } 
 
 
-        stage ("Deploy to stage"){
-            steps{
-                sh 'echo deploy to stage'                              
+        stage('Deploy to ECS staging') {
+            steps {
+                withAWS(credentials: 'aws-ecr-creds', region: "${AWS_REGION}") {
+                    sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'
+                } 
             }
         }
 
