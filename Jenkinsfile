@@ -123,6 +123,7 @@ pipeline{
                             error("Docker login to ECR failed.")
                         }
                     }
+                }
             }
         }
 
