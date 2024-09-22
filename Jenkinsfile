@@ -14,7 +14,7 @@ pipeline{
         /*registryCreds = 'dockerlogin'
         registry = "https://hub.docker.com" */
 
-        AWS_REGION = 'us-west-2' // Specify your AWS region
+        AWS_REGION = 'eu-west-3' // Specify your AWS region
         ECR_REPOSITORY = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'       
         ECR_REGISTRY = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
         service = "vproappstagesvc"
@@ -77,7 +77,7 @@ pipeline{
         }
         
 
-        stage('BUILD DOCKER IMAGE'){
+       /* stage('BUILD DOCKER IMAGE'){
             // requires the following plugins: ## docker pipeline, ## cloudbees docker build and publish 
             // no configuration required after plugins installation
             steps{
@@ -87,7 +87,7 @@ pipeline{
             }
         }
 
-        /*
+        
         stage('Upload App Image') {  //upload to dockerhub
           steps{
             script {
@@ -103,24 +103,20 @@ pipeline{
         stage('Build and Upload app Image'){  //upload to ecr, Install the plugin "AWS steps", and store aws credentials
             steps{
                 script {
-                   // Retrieve AWS credentials securely
-                    withCredentials([usernamePassword(credentialsId: 'aws-ecr-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        // Get ECR login token
-                        def ecrLogin = sh(script: "curl -s -X GET https://api.ecr.${AWS_REGION}.amazonaws.com/v2/ | \
-                            aws ecr get-login-password --region ${AWS_REGION} | \
-                            docker login --username AWS --password-stdin ${ECR_REPOSITORY}", returnStdout: true).trim()
+                   script {
+                    // Use the AWS Credentials
+                    withAWS(credentials: 'aws-ecr-creds', region: "${AWS_REGION}") {
+                        // Authenticate to ECR
+                        def ecrLogin = sh(script: "aws ecr get-login-password --region ${AWS_REGION}", returnStdout: true).trim()
+                        sh "echo ${ecrLogin} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}"
 
-                        // Check if login was successful
-                        if (ecrLogin.contains("Login Succeeded")) {
-                           
-                            // Push the Docker image to ECR
-                            dockerImage.push("$BUILD_NUMBER")
-                            dockerImage.push('latest')
+                        // Build the Docker image
+                        def dockerImage = docker.build("${ECR_REPOSITORY} + /ecommerce:${BUILD_ID}")
 
-                        } else {
-                            error("Docker login to ECR failed.")
-                        }
+                        // Push the Docker image to ECR
+                        dockerImage.push()
                     }
+                }
                 }
             }
         }
