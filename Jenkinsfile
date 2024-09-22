@@ -14,7 +14,7 @@ pipeline{
         /*registryCreds = 'dockerlogin'
         registry = "https://hub.docker.com" */
 
-        registryCredential = 'ecr:eu-west-3:awscreds'
+        registryCredential = 'awscreds'
         appRegistry = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'    
         ecrRegistry = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
         service = "vproappstagesvc"
