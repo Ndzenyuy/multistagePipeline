@@ -17,8 +17,8 @@ pipeline{
         AWS_REGION = 'eu-west-3' // Specify your AWS region
         ECR_REPOSITORY = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'       
         ECR_REGISTRY = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
-        service = "vproappstagesvc"
-        cluster = "vproappcluster"
+        service = "ecommercesvc1"
+        cluster = "ecommerce"
     }
 
    
@@ -82,25 +82,24 @@ pipeline{
             // no configuration required after plugins installation
             steps{
                 script{
-                       dockerImage = docker.build( ${ECR_REPOSITORY} + "/ecommerce:${BUILD_ID}",  ".")               
+                    dockerImage = docker.build("ndzenyuy/ecommerce:${BUILD_ID}",  ".")               
                     }
             }
         }
 
-        
-        stage('Upload App Image') {  //upload to dockerhub
+        stage('Upload App Image') {
           steps{
             script {
-               withDockerRegistry([ credentialsId: registryCredential, url: ecrRegistry]){
+               withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
                 dockerImage.push("$BUILD_NUMBER")
                 dockerImage.push('latest')
                }              
               
             }
           }
-        } */
+        }  */
 
-        stage('Build and Upload app Image'){  //upload to ecr, Install the plugin "AWS steps", and store aws credentials
+        stage('Build and Upload app Image'){  //Build and upload to ecr, Install the plugin "AWS steps", and store aws credentials
             steps{
                 script {
                    script {
@@ -132,10 +131,11 @@ pipeline{
         } 
 
 
-        stage ("Deploy to stage"){
-            steps{
-                sh 'echo deploy to stage'          
-                                    
+        stage('Deploy to ECS staging') {
+            steps {
+                withAWS(credentials: 'aws-ecr-creds', region: "${AWS_REGION}") {
+                    sh 'aws ecs update-service --cluster my-cluster --service dev/my-service --force-new-deployment'
+                } 
             }
         }
 
