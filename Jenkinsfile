@@ -111,7 +111,7 @@ pipeline{
                         sh "echo ${ecrLogin} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}"
 
                         // Build the Docker image
-                        def dockerImage = docker.build(${ECR_REPOSITORY}:${BUILD_ID})
+                        def dockerImage = docker.build(${ECR_REPOSITORY} + ":" + ${BUILD_ID})
 
                         // Push the Docker image to ECR
                         dockerImage.push("${BUILD_NUMBER}")
