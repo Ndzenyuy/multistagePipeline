@@ -14,12 +14,14 @@ pipeline{
         /*registryCreds = 'dockerlogin'
         registry = "https://hub.docker.com" */
 
-        registryCredential = 'ecr:eu-west-2:awscreds'
-        appRegistry = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'    
-        ecrRegistry = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
+        AWS_REGION = 'us-west-2' // Specify your AWS region
+        ECR_REPOSITORY = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'       
+        ECR_REGISTRY = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
         service = "vproappstagesvc"
         cluster = "vproappcluster"
     }
+
+   
 
     stages{
         stage('UNIT TEST'){                         // make sure maven3 is configured in tools
@@ -74,13 +76,13 @@ pipeline{
 
         }
         
-
+/*
         stage('BUILD DOCKER IMAGE'){
             // requires the following plugins: ## docker pipeline, ## cloudbees docker build and publish 
             // no configuration required after plugins installation
             steps{
                 script{
-                    dockerImage = docker.build(appRegistry + "/ecommerce:${BUILD_ID}",  ".")               
+                    dockerImage = docker.build( ECR_REPOSITORY + "/ecommerce:${BUILD_ID}",  ".")               
                     }
             }
         }
@@ -96,23 +98,38 @@ pipeline{
               
             }
           }
-        } 
+        } */
 
-        /*stage('Upload app Image'){  //upload to ecr, Install the plugin "AWS steps", and store aws credentials
+        stage('Build and Upload app Image'){  //upload to ecr, Install the plugin "AWS steps", and store aws credentials
             steps{
                 script {
-                   docker.withRegistry( ecrRegistry, registryCredential ) {
-                    dockerImage.push("$BUILD_NUMBER")
-                    dockerImage.push('latest')
-                    } 
-                }
+                   // Retrieve AWS credentials securely
+                    withCredentials([usernamePassword(credentialsId: 'aws-ecr-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        // Get ECR login token
+                        def ecrLogin = sh(script: "curl -s -X GET https://api.ecr.${AWS_REGION}.amazonaws.com/v2/ | \
+                            aws ecr get-login-password --region ${AWS_REGION} | \
+                            docker login --username AWS --password-stdin ${ECR_REPOSITORY}", returnStdout: true).trim()
+
+                        // Check if login was successful
+                        if (ecrLogin.contains("Login Succeeded")) {
+                            // Build the Docker image
+                            def dockerImage = docker.build( ECR_REPOSITORY + "/ecommerce:${BUILD_ID}",  ".")
+
+                            // Push the Docker image to ECR
+                            dockerImage.push("$BUILD_NUMBER")
+                            dockerImage.push('latest')
+
+                        } else {
+                            error("Docker login to ECR failed.")
+                        }
+                    }
             }
-        }*/
+        }
 
 
         stage ("CLEAN WORKSPACE"){
             steps{
-                sh 'docker rmi ndzenyuy/ecommerce:${BUILD_ID}'                
+                sh 'docker rmi ${ECR_REPOSITORY}/ecommerce:${BUILD_ID}'                
 
                 sh 'rm -rf target/'                
             }
