@@ -76,18 +76,18 @@ pipeline{
 
         }
         
-/*
+
         stage('BUILD DOCKER IMAGE'){
             // requires the following plugins: ## docker pipeline, ## cloudbees docker build and publish 
             // no configuration required after plugins installation
             steps{
                 script{
-                    dockerImage = docker.build( ECR_REPOSITORY + "/ecommerce:${BUILD_ID}",  ".")               
+                    dockerImage = docker.build( ${ECR_REPOSITORY} + "/ecommerce:${BUILD_ID}",  ".")               
                     }
             }
         }
 
-        
+        /*
         stage('Upload App Image') {  //upload to dockerhub
           steps{
             script {
@@ -112,9 +112,7 @@ pipeline{
 
                         // Check if login was successful
                         if (ecrLogin.contains("Login Succeeded")) {
-                            // Build the Docker image
-                            def dockerImage = docker.build( ECR_REPOSITORY + "/ecommerce:${BUILD_ID}",  ".")
-
+                           
                             // Push the Docker image to ECR
                             dockerImage.push("$BUILD_NUMBER")
                             dockerImage.push('latest')
