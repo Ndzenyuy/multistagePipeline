@@ -14,7 +14,7 @@ pipeline{
         /*registryCreds = 'dockerlogin'
         registry = "https://hub.docker.com" */
 
-        registryCredential = 'awscreds'
+        registryCredential = 'ecr:eu-west-2:awscreds'
         appRegistry = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'    
         ecrRegistry = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
         service = "vproappstagesvc"
@@ -86,19 +86,19 @@ pipeline{
         }
 
         
-        /*stage('Upload App Image') {  //upload to dockerhub
+        stage('Upload App Image') {  //upload to dockerhub
           steps{
             script {
-               withDockerRegistry([ credentialsId: "dockerlogin", url: ""]){
+               withDockerRegistry([ credentialsId: "$registryCredential", url: "$ecrRegistry"]){
                 dockerImage.push("$BUILD_NUMBER")
                 dockerImage.push('latest')
                }              
               
             }
           }
-        } */
+        } 
 
-        stage('Upload app Image'){  //upload to ecr, Install the plugin "AWS steps", and store aws credentials
+        /*stage('Upload app Image'){  //upload to ecr, Install the plugin "AWS steps", and store aws credentials
             steps{
                 script {
                    docker.withRegistry( ecrRegistry, registryCredential ) {
@@ -107,7 +107,7 @@ pipeline{
                     } 
                 }
             }
-        }
+        }*/
 
 
         stage ("CLEAN WORKSPACE"){
