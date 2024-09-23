@@ -3,7 +3,7 @@ pipeline{
     tools {
 
         maven "maven3"              // configure both openjdk and maven in manage jenkins -> tools let both names match these
-        jdk "openjdk-17"
+        jdk "openjdk-17"            // install eclispse tumarin installer so as to install jdk automatically
 
     }
 
@@ -16,7 +16,7 @@ pipeline{
 
         AWS_REGION = 'eu-west-3' // Specify your AWS region
         ECR_REPOSITORY = '781655249241.dkr.ecr.eu-west-3.amazonaws.com/emartapp'       
-        ECR_REGISTRY = "https://9781655249241.dkr.ecr.eu-west-3.amazonaws.com"
+        ECR_REGISTRY = "https://781655249241.dkr.ecr.eu-west-3.amazonaws.com"
         service = "ecommercesvc1"
         cluster = "ecommerce"
     }
@@ -121,6 +121,12 @@ pipeline{
             }
         }
 
+        stage ("Trivy Scan Image") {
+            steps{
+                sh 'trivy image ${ECR_REPOSITORY}:${BUILD_ID} > trivyimage.txt'
+            }
+        }
+
 
         stage ("CLEAN WORKSPACE"){
             steps{
@@ -129,6 +135,8 @@ pipeline{
                 sh 'rm -rf target/'                
             }
         } 
+
+        
 
 
         stage('Deploy to ECS staging') {
