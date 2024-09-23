@@ -134,9 +134,7 @@ pipeline{
                 sh 'docker rmi ${ECR_REPOSITORY}:${BUILD_ID}'  
                 sh 'rm -rf target/'                
             }
-        } 
-
-        
+        }         
 
        /*
         stage('Deploy to ECS staging') {
