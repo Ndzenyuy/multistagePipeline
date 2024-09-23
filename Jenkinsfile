@@ -138,7 +138,7 @@ pipeline{
 
         
 
-/*
+       /*
         stage('Deploy to ECS staging') {
             steps {
                 withAWS(credentials: 'aws-ecr-creds', region: "${AWS_REGION}") {
